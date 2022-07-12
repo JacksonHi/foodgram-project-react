@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'api.apps.ApiConfig',
     'meal.apps.MealConfig',
+    'users.apps.UsersConfig',
+    'colorfield',
 ]
 
 MIDDLEWARE = [
