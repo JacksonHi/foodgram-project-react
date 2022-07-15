@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'api.apps.ApiConfig',
-    'meal.apps.MealConfig',
     'users.apps.UsersConfig',
     'colorfield',
 ]
