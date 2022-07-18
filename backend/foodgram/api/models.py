@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from colorfield.fields import ColorField
 # from users.models import User
 
 
@@ -34,12 +33,17 @@ class Ingredients(models.Model):
 
 
 class Tag(models.Model):
-    """переделать на список 'завтрак','обуед','ужин'"""
+    """завтрак, обуед,ужин"""
+    COLOR_CHOICES = [
+        ('#E26C2D', 'Orange'),
+        ('#E26C2D', 'Green'),
+        ('#E26C2D', 'Purple'),
+    ]
     title = models.CharField(
         verbose_name='название',
         max_length=256
     )
-    color = ColorField(default='#FF0000')
+    color = models.CharField(choices=COLOR_CHOICES)
     slug = models.SlugField()
 
     class meta:
@@ -48,7 +52,7 @@ class Tag(models.Model):
         verbose_name_plural = 'теги'
         constraints = [
             models.UniqueConstraint(
-                fields=['title', 'slug'],
+                fields=['title', 'color', 'slug'],
                 name='unique_tag'
             )
         ]
