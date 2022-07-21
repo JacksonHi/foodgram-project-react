@@ -1,7 +1,5 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-# from users.models import User
-
 
 User = get_user_model()
 
@@ -9,8 +7,7 @@ User = get_user_model()
 class Ingredients(models.Model):
     name = models.CharField(
         verbose_name='название',
-        max_length=200,
-        unique=True
+        max_length=200
     )
     measurement_unit = models.CharField(
         verbose_name='единицы измерения',
@@ -23,7 +20,7 @@ class Ingredients(models.Model):
         verbose_name_plural = 'ингредиенты'
         constraints = [
             models.UniqueConstraint(
-                fields=['name', 'measurement'],
+                fields=['name', 'measurement_unit'],
                 name='unique_ingredients'
                 )
         ]
@@ -33,12 +30,17 @@ class Ingredients(models.Model):
 
 
 class Tag(models.Model):
-    """переделать на список 'завтрак','обуед','ужин'"""
+    """завтрак, обуед,ужин"""
+    COLOR_CHOICES = [
+        ('#E26C2D', 'Orange'),
+        ('#E26C2D', 'Green'),
+        ('#E26C2D', 'Purple'),
+    ]
     title = models.CharField(
         verbose_name='название',
         max_length=256
     )
-    color = ''
+    color = models.CharField(choices=COLOR_CHOICES, max_length=100)
     slug = models.SlugField()
 
     class meta:
@@ -47,7 +49,7 @@ class Tag(models.Model):
         verbose_name_plural = 'теги'
         constraints = [
             models.UniqueConstraint(
-                fields=['title', 'slug'],
+                fields=['title', 'color', 'slug'],
                 name='unique_tag'
             )
         ]
@@ -66,15 +68,11 @@ class Recipe(models.Model):
     description = models.TextField(verbose_name='описание')
     ingredients = models.ManyToManyField(
         Ingredients,
-        on_delete=models.SET_NULL,
-        null=True,
         related_name='recipes',
         verbose_name='ингредиенты'
     )
     tag = models.ManyToManyField(
         Tag,
-        on_delete=models.SET_NULL,
-        null=True,
         related_name='recipes',
         verbose_name='таг'
     )
@@ -93,14 +91,14 @@ class AmountOfIngredients(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='рецепт',
-        verbose_name='ingredients'
+        related_name='recipe',
+        verbose_name='рецепт'
     )
     ingredients = models.ForeignKey(
         Ingredients,
         on_delete=models.CASCADE,
-        related_name='ингредиент',
-        verbose_name='ingrediernts'
+        related_name='ingrediernts',
+        verbose_name='ингредиент'
     )
     amount = models.PositiveSmallIntegerField(verbose_name='количество')
 
@@ -114,35 +112,41 @@ class Favourites(models.Model):
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='пользователь',
-        verbose_name='favourite'
+        related_name='favourite',
+        verbose_name='пользователь'
         )
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='рецепт',
-        verbose_name='favourite',
-        unique=True
+        related_name='favourite',
+        verbose_name='рецепт',
     )
 
     class meta:
         verbose_name='избранное'
+        constraints = [
+            models.UniqueConstraint(fields=['recipe',],
+                                    name='unique favorites recipe')
+        ]
 
 
 class Basket(models.Model):
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='пользователь',
-        verbose_name='favourite'
+        related_name='basket',
+        verbose_name='корзина'
         )
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='рецепт',
-        verbose_name='favourite',
-        unique=True
+        related_name='basket',
+        verbose_name='корзина'
     )
 
     class meta:
         verbose_name='корзина'
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'recipe'],
+                                    name='unique basket author')
+        ]
