@@ -1,14 +1,9 @@
 from django.contrib import admin
-from api.models import MeasurementUnit, Ingredients, Tag, Recipe
-
-
-class MeasurementUnitAdmin(admin.ModelAdmin):
-    list_display = ('title',)
-    search_fields = ('title',)
+from api.models import Ingredients, Tag, Recipe
 
 
 class IngredientsAdmin(admin.ModelAdmin):
-    list_display = ('name', 'quantity', 'measurement_unit')
+    list_display = ('name', 'measurement_unit',)
     search_fields = ('name',)
 
 
@@ -18,11 +13,10 @@ class TagAdmin(admin.ModelAdmin):
 
 
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ('title', 'description', 'tag', 'cooking_time')
+    list_display = ('title', 'description', 'cooking_time')
     search_fields = ('title',)
 
 
-admin.site.register(MeasurementUnit, MeasurementUnitAdmin)
 admin.site.register(Ingredients, IngredientsAdmin)
 admin.site.register(Tag, TagAdmin)
 admin.site.register(Recipe, RecipeAdmin)
