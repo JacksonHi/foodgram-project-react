@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from colorfield.fields import ColorField
 # from users.models import User
 
 
@@ -39,7 +38,7 @@ class Tag(models.Model):
         verbose_name='название',
         max_length=256
     )
-    color = ColorField(default='#FF0000')
+    color = ''
     slug = models.SlugField()
 
     class meta:
