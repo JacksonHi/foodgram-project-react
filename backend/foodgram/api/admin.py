@@ -8,8 +8,8 @@ class IngredientsAdmin(admin.ModelAdmin):
 
 
 class TagAdmin(admin.ModelAdmin):
-    list_display = ('title', 'slug',)
-    search_fields = ('title',)
+    list_display = ('name', 'slug',)
+    search_fields = ('name',)
 
 
 class RecipeAdmin(admin.ModelAdmin):

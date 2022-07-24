@@ -32,11 +32,11 @@ class Ingredients(models.Model):
 class Tag(models.Model):
     """завтрак, обуед,ужин"""
     COLOR_CHOICES = [
-        ('#E26C2D', 'Orange'),
-        ('#E26C2D', 'Green'),
-        ('#E26C2D', 'Purple'),
+        ('#00FF00', 'Green'),
+        ('#FF0000', 'Red'),
+        ('#0000FF', 'Blue'),
     ]
-    title = models.CharField(
+    name = models.CharField(
         verbose_name='название',
         max_length=256
     )
@@ -44,18 +44,18 @@ class Tag(models.Model):
     slug = models.SlugField()
 
     class meta:
-        ordering = ['title']
+        ordering = ['name']
         verbose_name = 'тег'
         verbose_name_plural = 'теги'
         constraints = [
             models.UniqueConstraint(
-                fields=['title', 'color', 'slug'],
+                fields=['name', 'color', 'slug'],
                 name='unique_tag'
             )
         ]
 
     def __str__(self):
-        return self.title
+        return self.name
 
 
 class Recipe(models.Model):
