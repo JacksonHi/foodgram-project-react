@@ -1,0 +1,29 @@
+[
+    {
+        "model": "api.tag",
+        "pk": 0,
+        "fields":{
+            "name": "Завтрак",
+            "color": "#00FF00",
+            "slug": "breakfast"
+        }
+    },
+    {
+        "model": "api.tag",
+        "pk": 1,
+        "fields":{
+            "name": "Обед",
+            "color": "#FF0000",
+            "slug": "lunch"
+        }
+    },
+    {
+        "model": "api.tag",
+        "pk": 2,
+        "fields":{
+            "name": "Ужин",
+            "color": "#0000FF",
+            "slug": "dinner"
+        }
+    }
+]
