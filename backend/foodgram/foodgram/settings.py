@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'rest_framework_simplejwt',
+    'rest_framework.authtoken',
     'djoser',
     'api.apps.ApiConfig',
     'users.apps.UsersConfig',
@@ -138,16 +138,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 FIXTURE_DIRS = ['data/',]
 
-SIMPLE_JWT = {
-    # Устанавливаем срок жизни токена
-   'ACCESS_TOKEN_LIFETIME': timedelta(days=30),
-   'AUTH_HEADER_TYPES': ('Token',),
-} 
-
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+
 }
 
 DJOSER = {
@@ -158,7 +153,7 @@ DJOSER = {
     },
     'PERMISSIONS': {
         'user_list': ['rest_framework.permissions.AllowAny'],
-        'user': ['rest_framework.permissions.AllowAny'],
+        'user': ['rest_framework.permissions.IsAuthenticated'],
     },
     'HIDE_USERS': False,
     'LOGIN_FIELD': 'email'
