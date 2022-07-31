@@ -1,3 +1,8 @@
-from django.shortcuts import render
+from djoser.views import UserViewSet
 
-# Create your views here.
+from backend.foodgram.users.serializers import CastomUserSerializer
+
+
+class CastomUserViewSet(UserViewSet):
+    serializer_class = CastomUserSerializer
+
