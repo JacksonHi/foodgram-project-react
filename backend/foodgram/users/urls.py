@@ -1,12 +1,12 @@
 from django.urls import path, include
 from rest_framework.routers import SimpleRouter
-from .views import FollowViewSet
+from .views import CastomUserViewSet
 
 
-app_name = 'urls'
+app_name = 'users'
 
 router = SimpleRouter()
-router.register('subscribe', FollowViewSet)
+router.register('users', CastomUserViewSet)
 
 urlpatterns = [
     path('', include(router.register)),
