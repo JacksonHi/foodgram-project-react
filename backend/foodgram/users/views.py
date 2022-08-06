@@ -10,13 +10,13 @@ from users.serializers import FollowSerializer
 
 
 class CastomUserViewSet(UserViewSet):
-    @action(detail=False)    # Не видит 
+    @action(detail=False)
     def subscriptions(self, request):
         """Список подписок"""
         print('hhhh')
-        follow = Follow.objects.filter(following__user=request.user)
-        serializer = FollowSerializer(follow, many=True)
-        # serializer.is_valid()
+        follow = Follow.objects.filter(user=request.user)
+        serializer = FollowSerializer(follow, request)
+        #serializer.is_valid()
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
