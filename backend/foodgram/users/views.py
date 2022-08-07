@@ -13,11 +13,11 @@ class CastomUserViewSet(UserViewSet):
     @action(detail=False)
     def subscriptions(self, request):
         """Список подписок"""
-        print('hhhh')
-        follow = Follow.objects.filter(user=request.user)
-        serializer = FollowSerializer(follow, request)
-        #serializer.is_valid()
-
+        user = get_object_or_404(User, id=request.user.id)
+        follow = user.follower.all()
+        # follow = User.objects.filter(following=request.user)
+        serializer = FollowSerializer(follow, many=True)
+        
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(methods=['post', 'delete'], detail=True)
@@ -27,10 +27,13 @@ class CastomUserViewSet(UserViewSet):
         author = get_object_or_404(queryset, id=id)
         user = request.user
         if request.method == 'POST':
-            follow = Follow.objects.create(user=user, author=author)
-            serializer = FollowSerializer(follow, request)
-            serializer.is_valid()
+            #Follow.objects.create(user=user, author=author)
+            serializer = FollowSerializer(author)
+            if serializer.is_valid():
+                print('valid')
+                serializer.save()
             return Response(serializer.data, status.HTTP_201_CREATED)
-        Follow.objects.filter(user=user, author=author).delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        elif request.method == 'DELETE':
+            Follow.objects.filter(user=user, author=author).delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
 

@@ -38,13 +38,12 @@ class FollowSerializer(serializers.Serializer):
     #recipes_count = serializers.SerializerMethodField()
 
     class Meta:
-        model = Follow
+        model = User
         field = ['email', 'id', 'username', 'first_name', 'last_name',
             'is_subscribed']
 
     def get_is_subscribed(self, obj):
-        user = self.context.get('request').user
-        return Follow.objects.filter(user=user, author=obj).exists()
+        return True
 
     #def get_recipes(self, obj):
 
