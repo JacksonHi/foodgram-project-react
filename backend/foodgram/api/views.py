@@ -11,3 +11,7 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
+
+
+class RecipeViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Recipe.objects.all()

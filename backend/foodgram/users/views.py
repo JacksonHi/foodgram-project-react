@@ -15,7 +15,6 @@ class CastomUserViewSet(UserViewSet):
         """Список подписок"""
         user = get_object_or_404(User, id=request.user.id)
         follow = user.follower.all()
-        # follow = User.objects.filter(following=request.user)
         serializer = FollowSerializer(follow, many=True)
         
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -27,13 +26,18 @@ class CastomUserViewSet(UserViewSet):
         author = get_object_or_404(queryset, id=id)
         user = request.user
         if request.method == 'POST':
-            #Follow.objects.create(user=user, author=author)
-            serializer = FollowSerializer(author)
-            if serializer.is_valid():
-                print('valid')
-                serializer.save()
+            if user == author:
+                return Response({'errors': 'Нельзя подписаться на себя'}, status.HTTP_400_BAD_REQUEST)
+            elif Follow.objects.filter(user=user, author=author).exists():
+                return Response({'errors': 'Уже подписался'}, status.HTTP_400_BAD_REQUEST)
+            follow = Follow.objects.create(user=user, author=author)
+            serializer = FollowSerializer(
+                follow, context={'request': request}
+            )
             return Response(serializer.data, status.HTTP_201_CREATED)
         elif request.method == 'DELETE':
+            if Follow.objects.filter(user=user, author=author).exists() == False:
+                return Response({'errors': 'Вы не подписаны'}, status.HTTP_400_BAD_REQUEST)
             Follow.objects.filter(user=user, author=author).delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
 
