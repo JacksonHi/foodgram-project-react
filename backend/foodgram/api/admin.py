@@ -13,8 +13,8 @@ class TagAdmin(admin.ModelAdmin):
 
 
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ('title', 'description', 'cooking_time')
-    search_fields = ('title',)
+    list_display = ('name', 'text', 'cooking_time')
+    search_fields = ('name',)
 
 
 admin.site.register(Ingredients, IngredientsAdmin)

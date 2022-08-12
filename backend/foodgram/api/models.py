@@ -60,23 +60,23 @@ class Tag(models.Model):
 
 class Recipe(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    title = models.CharField(
+    name = models.CharField(
         verbose_name='название',
         max_length=256
     )
     image = models.ImageField(verbose_name='картинка')
-    description = models.TextField(verbose_name='описание')
+    text = models.TextField(verbose_name='описание')
     ingredients = models.ManyToManyField(
         Ingredients,
         related_name='recipes',
         verbose_name='ингредиенты'
     )
-    tag = models.ManyToManyField(
+    tags = models.ManyToManyField(
         Tag,
         related_name='recipes',
         verbose_name='таг'
     )
-    cooking_time = models.TimeField(verbose_name='время на приготовление')
+    cooking_time = models.TimeField(verbose_name='время на приготовление')  # изменитть поле
 
     class meta:
         ordering = ['-id']

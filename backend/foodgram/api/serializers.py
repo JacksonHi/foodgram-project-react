@@ -1,8 +1,11 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
+from drf_extra_fields.fields import Base64ImageField
 
-from backend.foodgram.users.models import Follow
+from users.models import Follow
+from users.serializers import CastomUserSerializer
 from .models import Ingredients, Recipe, Tag
+
 
 User = get_user_model()
 
@@ -20,6 +23,10 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializer(serializers.ModelSerializer):
+    author = CastomUserSerializer(read_only=True)
+    ingredients = IngredientsSerializer(many=True)
+    image = Base64ImageField()
+    cooking_time = serializers.TimeField()
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
 
@@ -31,7 +38,12 @@ class RecipeSerializer(serializers.ModelSerializer):
         ]
     
     def get_is_favorited(self, obj):
-        return Follow.objects.filter(user=self.context.get('request').user, author=obj).exists
+        user = self.context.get['request'].user
+        return Follow.objects.filter(user=user, author=obj).exists
 
     def get_is_in_shopping_cart(self, obj):
         return True
+
+    def create(self, validated_data):
+        print(validated_data)
+        return super().create(validated_data)
