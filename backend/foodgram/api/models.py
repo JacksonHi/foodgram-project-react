@@ -76,7 +76,7 @@ class Recipe(models.Model):
         related_name='recipes',
         verbose_name='таг'
     )
-    cooking_time = models.TimeField(verbose_name='время на приготовление')  # изменитть поле
+    cooking_time = models.PositiveSmallIntegerField(verbose_name='время на приготовление')
 
     class meta:
         ordering = ['-id']

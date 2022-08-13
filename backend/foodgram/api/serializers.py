@@ -4,7 +4,7 @@ from drf_extra_fields.fields import Base64ImageField
 
 from users.models import Follow
 from users.serializers import CastomUserSerializer
-from .models import Ingredients, Recipe, Tag
+from .models import Ingredients, Recipe, Tag, AmountOfIngredients
 
 
 User = get_user_model()
@@ -22,11 +22,18 @@ class TagSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'color', 'slug']
 
 
+class AmountOfIngredientsSerializer(serializers.ModelSerializer):
+
+    
+    class Meta:
+        model = AmountOfIngredients
+        field = ['id', 'recipe', 'ingredients', 'amount']
+
+
 class RecipeSerializer(serializers.ModelSerializer):
     author = CastomUserSerializer(read_only=True)
     ingredients = IngredientsSerializer(many=True)
     image = Base64ImageField()
-    cooking_time = serializers.TimeField()
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
 
