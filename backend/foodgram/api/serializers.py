@@ -27,12 +27,12 @@ class AmountOfIngredientsSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = AmountOfIngredients
-        field = ['id', 'recipe', 'ingredients', 'amount']
+        fields = ['id', 'recipe', 'ingredients', 'amount']
 
 
 class RecipeSerializer(serializers.ModelSerializer):
     author = CastomUserSerializer(read_only=True)
-    ingredients = IngredientsSerializer(many=True)
+    ingredients = AmountOfIngredientsSerializer(many=True)
     image = Base64ImageField()
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
@@ -51,6 +51,9 @@ class RecipeSerializer(serializers.ModelSerializer):
     def get_is_in_shopping_cart(self, obj):
         return True
 
-    def create(self, validated_data):
-        print(validated_data)
-        return super().create(validated_data)
+    """def create(self, validated_data):
+        ingredients = validated_data.pop('ingredients')
+        recipe = Recipe.objects.create(**validated_data)
+        for ingredient in ingredients:
+            AmountOfIngredients.objects.create(recipe=recipe, **ingredient)
+        return recipe"""
