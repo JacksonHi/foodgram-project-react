@@ -32,7 +32,7 @@ class AmountOfIngredientsSerializer(serializers.ModelSerializer):
 
 class RecipeSerializer(serializers.ModelSerializer):
     author = CastomUserSerializer(read_only=True)
-    ingredients = AmountOfIngredientsSerializer(many=True)
+    ingredients = IngredientsSerializer(many=True)
     image = Base64ImageField()
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
