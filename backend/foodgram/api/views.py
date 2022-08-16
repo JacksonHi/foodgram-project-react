@@ -17,13 +17,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
 
-    def create(self, request, *args, **kwargs):
-        """
-            - получить экземпляр ингредиента
-            - проверить на валидность через сериализатор и сохранить
-            - проверить на валидность через сериализатор amount of ingredient и сохранить
-            - вернуть response с комбинацией экземпляров 
-        """
+    """def create(self, request, *args, **kwargs):
         #print(request.data)
         recipe = request.data['name']
         ingredients = request.data['ingredients']
@@ -38,4 +32,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
         #print(new_ingredients)
         request.data['ingredients'] = new_ingredients
         print(request.data)
-        return super().create(request, *args, **kwargs)
+        return super().create(request, *args, **kwargs)"""
+
+    def perform_create(self, serializer):
+        serializer.save(
+            author=self.request.user
+            )
