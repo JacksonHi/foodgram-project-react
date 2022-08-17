@@ -23,10 +23,10 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class AmountOfIngredientsSerializer(serializers.ModelSerializer):
-    id = serializers.ReadOnlyField(source='ingredients.id')
-    recipe = serializers.ReadOnlyField(source='recipe.id')
+    id = serializers.ReadOnlyField(source='ingredien.id')
+    recipe = serializers.ReadOnlyField(source='ingredient.id')
     ingredients = serializers.ReadOnlyField(source='ingredients.name')
-    amount = serializers.ReadOnlyField(source='recipe.amount')
+    amount = serializers.ReadOnlyField(source='ingredient.amount')
 
 
     class Meta:
@@ -76,21 +76,24 @@ class RecipeSerializer(serializers.ModelSerializer):
             )
 
         return value
-    
+
+    def create_ingredients(self, ingredients, recipe):
+        for ingredient in ingredients:
+            AmountOfIngredients.objects.create(
+                recipe=recipe,
+                ingredients_id=ingredient['id'],
+                amount=ingredient['amount']
+            )
+
     def create(self, validated_data):
         ingredients = self.initial_data.get('ingredients')
         tags =self.initial_data.get('tags')
         recipe = Recipe.objects.create(**validated_data)
-        for ingredient in ingredients:
-            ingr = Ingredients.objects.get(id=ingredient['id'])
-            AmountOfIngredients.objects.create(
-                recipe=recipe,
-                ingredients=ingr,
-                amount=ingredient['amount']
-                )
+        self.create_ingredients(ingredients, recipe)
         recipe.tags.set(tags)
-        r = [30, 35]
-        """for i in ingredients:
-            r.append(i['id'])"""
+        r = AmountOfIngredients.objects.filter(recipe__id=84)
         recipe.ingredients.set(r)
         return recipe
+
+    def update(self, instance, validated_data):
+        return super().update(instance, validated_data)
