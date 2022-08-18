@@ -91,8 +91,9 @@ class RecipeSerializer(serializers.ModelSerializer):
         recipe = Recipe.objects.create(**validated_data)
         self.create_ingredients(ingredients, recipe)
         recipe.tags.set(tags)
-        r = AmountOfIngredients.objects.filter(recipe__id=84)
-        recipe.ingredients.set(r)
+        r = AmountOfIngredients.objects.filter(recipe__id=3)
+        recipe.ingredients.set(r.values_list('id', flat=True))
+        #print(r.values_list('id', flat=True))
         return recipe
 
     def update(self, instance, validated_data):
