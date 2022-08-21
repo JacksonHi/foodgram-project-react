@@ -13,11 +13,6 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = TagSerializer
 
 
-class AmountOfIngredientsViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = AmountOfIngredients.objects.all()
-    serializer_class = AmountOfIngredientsSerializer
-
-
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
@@ -40,6 +35,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return super().create(request, *args, **kwargs)"""
 
     def perform_create(self, serializer):
+        #print(serializer)
         serializer.save(
             author=self.request.user
             )
