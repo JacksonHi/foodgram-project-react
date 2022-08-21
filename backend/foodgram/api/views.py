@@ -31,9 +31,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(methods=['post', 'delete'], detail=True)
     def favorite(self, request, pk):
         if request.method == 'POST':
-            return self.cre_obj(request, Favourites, pk)
+            return self.cre_obj(request.user, Favourites, pk)
         elif request.method == 'DELETE':
-            return self.del_obj(request, pk)
+            return self.del_obj(request.user, Favourites, pk)
     
     def download_shopping_cart(self, request):
         pass
@@ -41,20 +41,21 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(methods=['post', 'delete'], detail=True)
     def shopping_cart(self, request, pk):
         if request.method == 'POST':
-            self.cre_obj(request, Basket, pk)
+            return self.cre_obj(request.user, Basket, pk)
         elif request.method == 'DELETE':
-            self.del_obj(request, Basket, pk)
+            return self.del_obj(request.user, Basket, pk)
 
-    def cre_obj(self, request, model, pk):
-        """AttributeError: Got AttributeError when attempting to get a value for field `name` on serializer `SubRecipeSerializer`.
-The serializer field might be named incorrectly and not match any attribute or key on the `Favourites` instance.
-Original exception text was: 'Favourites' object has no attribute 'name'."""
-        if model.objects.filter(author=request.user, recipe__id=pk).exists():
-            return Response({'errors': 'кецепт уже есть в избранном'}, status.HTTP_400_BAD_REQUEST)
+    def cre_obj(self, user, model, pk):
+        if model.objects.filter(author=user, recipe__id=pk).exists():
+            return Response({'errors': 'рецепт уже в списке'}, status.HTTP_400_BAD_REQUEST)
         recipe = get_object_or_404(Recipe, id=pk)
-        cre = model.objects.create(author=request.user, recipe=recipe)
-        serializer = SubRecipeSerializer(cre)
+        model.objects.create(author=user, recipe=recipe)
+        serializer = SubRecipeSerializer(recipe)
         return Response(serializer.data, status.HTTP_201_CREATED)
 
-    def del_obj(self, request, model, pk):
-        pass
+    def del_obj(self, user, model, pk):
+        if not model.objects.filter(author=user, recipe__id=pk):
+            return Response({'errors': 'рецепт в списке отсутствует'})
+        recipe = get_object_or_404(Recipe, id=pk)
+        model.objects.filter(author=user, recipe=recipe).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
