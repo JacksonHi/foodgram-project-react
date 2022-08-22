@@ -3,7 +3,7 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
-from .models import Ingredients, Tag, Recipe, Favourites, Basket
+from .models import AmountOfIngredients, Ingredients, Tag, Recipe, Favourites, Basket
 from .serializers import IngredientsSerializer, TagSerializer, RecipeSerializer
 from users.serializers import SubRecipeSerializer
 
@@ -34,8 +34,30 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return self.cre_obj(request.user, Favourites, pk)
         elif request.method == 'DELETE':
             return self.del_obj(request.user, Favourites, pk)
-    
+
+    @action(detail=False)
     def download_shopping_cart(self, request):
+        # запрос на список ингредиентов в выбраных рецептах
+        basket = Basket.objects.filter(author=request.user)
+        #print(basket)
+        content_list = {}
+        for content in basket:
+            #print(content.recipe)
+            ingredients = AmountOfIngredients.objects.filter(recipe=content.recipe)
+            #print(r)
+        # добавить ингредиенты в словарь повторяющиеся ингредиенты
+            for ingredient in ingredients:
+                name = ingredient.ingredients
+                amount = ingredient.amount
+                measurement_unit = ingredient.ingredients.measurement_unit
+                print(name)
+                print(amount)
+                print(measurement_unit)
+
+                if name not in content_list:
+                    content_list[name] = list(amount, measurement_unit)
+                print(content_list)
+        # передать на скачивание, хз как
         pass
 
     @action(methods=['post', 'delete'], detail=True)
