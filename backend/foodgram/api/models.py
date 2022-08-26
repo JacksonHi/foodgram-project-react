@@ -77,7 +77,8 @@ class Recipe(models.Model):
         related_name='recipes',
         verbose_name='таг'
     )
-    cooking_time = models.PositiveSmallIntegerField(verbose_name='время на приготовление')
+    cooking_time = models.PositiveSmallIntegerField(
+        verbose_name='время на приготовление')
 
     class meta:
         ordering = ['-id']
@@ -98,7 +99,7 @@ class AmountOfIngredients(models.Model):
     ingredients = models.ForeignKey(
         Ingredients,
         on_delete=models.CASCADE,
-        related_name='ingrediernts',
+        related_name='ingredients',
         verbose_name='ингредиент'
     )
     amount = models.PositiveSmallIntegerField(verbose_name='количество')
@@ -124,9 +125,9 @@ class Favourites(models.Model):
     )
 
     class meta:
-        verbose_name='избранное'
+        verbose_name = 'избранное'
         constraints = [
-            models.UniqueConstraint(fields=['recipe',],
+            models.UniqueConstraint(fields=['recipe'],
                                     name='unique favorites recipe')
         ]
 
@@ -146,7 +147,7 @@ class Basket(models.Model):
     )
 
     class meta:
-        verbose_name='корзина'
+        verbose_name = 'корзина'
         constraints = [
             models.UniqueConstraint(fields=['user', 'recipe'],
                                     name='unique basket author')

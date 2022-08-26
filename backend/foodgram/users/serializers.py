@@ -13,12 +13,12 @@ class CastomUserSerializer(UserSerializer):
 
     class Meta:
         model = User
-        fields = ['email', 'id', 'username', 'first_name', 'last_name', 'is_subscribed']
+        fields = ['email', 'id', 'username', 'first_name', 'last_name',
+                  'is_subscribed']
 
     def get_is_subscribed(self, obj):
-        try:
-            user = self.context.get('request').user
-        except:
+        user = self.context.get('request').user
+        if user.is_anonymous:
             return False
         return Follow.objects.filter(user=user, author=obj).exists()
 
@@ -48,7 +48,7 @@ class FollowSerializer(serializers.Serializer):
     class Meta:
         model = Follow
         field = ['email', 'id', 'username', 'first_name', 'last_name',
-            'is_subscribed', 'recipes', 'recipes_count']
+                 'is_subscribed', 'recipes', 'recipes_count']
 
     def get_is_subscribed(self, obj):
         return Follow.objects.filter(user=obj.user, author=obj.author).exists()

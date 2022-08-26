@@ -24,20 +24,18 @@ class TagSerializer(serializers.ModelSerializer):
 
 class AmountOfIngredientsSerializer(serializers.ModelSerializer):
     id = serializers.ReadOnlyField()
-    measurement_unit = serializers.ReadOnlyField(source='ingredient.measurement_unit')
-    name = serializers.ReadOnlyField(source='ingredient.name')
-    amount = serializers.ReadOnlyField(source='ingredient.amount')
-
+    measurement_unit = serializers.ReadOnlyField(
+        source='ingredients.measurement_unit')
+    name = serializers.ReadOnlyField(source='ingredients.name')
 
     class Meta:
         model = AmountOfIngredients
-        fields = ['id', 'name', 'measurement_unit', 'amount']  # id, name, amount, measurement_unit
+        fields = ['id', 'name', 'measurement_unit', 'amount']
 
 
 class RecipeSerializer(serializers.ModelSerializer):
-    """не работают ингредиенты"""
     author = CastomUserSerializer(read_only=True)
-    ingredients = AmountOfIngredientsSerializer(many=True)
+    ingredients = serializers.SerializerMethodField()
     image = Base64ImageField()
     tags = TagSerializer(many=True, read_only=True)
     is_favorited = serializers.SerializerMethodField()
@@ -49,18 +47,27 @@ class RecipeSerializer(serializers.ModelSerializer):
             'id', 'tags', 'author', 'ingredients', 'name', 'image', 'text',
             'cooking_time', 'is_favorited', 'is_in_shopping_cart'
         ]
-    
+
+    def get_ingredients(self, obj):
+        queryset = AmountOfIngredients.objects.filter(recipe=obj)
+        serializer = AmountOfIngredientsSerializer(queryset, many=True)
+        return serializer.data
+
     def get_is_favorited(self, obj):
         user = self.context.get('request').user
-        return Recipe.objects.filter(favourite__author=user, id=obj.id).exists()
+        if user.is_anonymous:
+            return False
+        return Recipe.objects.filter(
+            favourite__author=user, id=obj.id).exists()
 
     def get_is_in_shopping_cart(self, obj):
         user = self.context.get('request').user
+        if user.is_anonymous:
+            return None
         return Recipe.objects.filter(basket__author=user, id=obj.id).exists()
 
     def validate(self, attrs):
         ingredients = self.initial_data.get('ingredients')
-        #print(ingredients)
         if not ingredients:
             raise serializers.ValidationError({
                 'ingredients': 'Нужен хотя-бы один ингридиент для рецепта'})
@@ -84,39 +91,30 @@ class RecipeSerializer(serializers.ModelSerializer):
         return attrs
 
     def create_ingredients(self, ingredients, recipe):
-        #print('ingr')
-        #print(recipe)
-        #print(ingredients)
         for ingredient in ingredients:
-            #print(ingredient)
             AmountOfIngredients.objects.create(
                 recipe=recipe,
                 ingredients_id=ingredient.get('id'),
                 amount=ingredient.get('amount')
             )
-    
+
     def create(self, validated_data):
         ingredients = validated_data.pop('ingredients')
-        tags =self.initial_data.get('tags')
+        tags = self.initial_data.get('tags')
         recipe = Recipe.objects.create(**validated_data)
         self.create_ingredients(ingredients, recipe)
         recipe.tags.set(tags)
         AmountOfIngredients.objects.filter(recipe__id=recipe.id)
-        #print(r.values())
-        #recipe.ingredients.set(r.values_list('id', flat=True))
-        #print(r)
         return recipe
 
     def update(self, instance, validated_data):
         instance.name = validated_data.get('name')
         instance.image = validated_data.get('image')
         instance.text = validated_data.get('text')
-        instance.cooking_time =validated_data.get('cooking_time')
+        instance.cooking_time = validated_data.get('cooking_time')
         tags_data = self.initial_data.get('tags')
         instance.tags.set(tags_data)
         ingredients = validated_data.pop('ingredients')
         self.create_ingredients(ingredients, instance)
         instance.save()
         return instance
-
-
