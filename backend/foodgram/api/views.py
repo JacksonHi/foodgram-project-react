@@ -11,14 +11,14 @@ from .models import (AmountOfIngredients, Ingredients, Tag, Recipe,
 from .serializers import IngredientsSerializer, TagSerializer, RecipeSerializer
 from .pagination import RecipePagination
 from .permissions import RecipePermission
-from .filters import RecipeFilter
+from .filters import RecipeFilter, IngredientFilter
 from users.serializers import SubRecipeSerializer
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Ingredients.objects.all()
     serializer_class = IngredientsSerializer
-    filter_backends = (filters.SearchFilter,)
+    filter_backends = (IngredientFilter,)
     search_fields = ('^name',)
 
 
@@ -28,7 +28,7 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
-    queryset = Recipe.objects.all()
+    queryset = Recipe.objects.all().order_by('-id')
     serializer_class = RecipeSerializer
     pagination_class = RecipePagination
     permission_classes = (RecipePermission,)

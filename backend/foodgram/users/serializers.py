@@ -1,6 +1,7 @@
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
+from rest_framework.validators import UniqueValidator
 
 from api.models import Recipe
 from .models import Follow
@@ -24,6 +25,9 @@ class CastomUserSerializer(UserSerializer):
 
 
 class CastomUserCreateSerializer(UserCreateSerializer):
+    email = serializers.EmailField(
+        validators=[UniqueValidator(queryset=User.objects.all())])
+
     class Meta:
         model = User
         fields = ['email', 'username', 'first_name', 'last_name', 'password']
@@ -54,7 +58,12 @@ class FollowSerializer(serializers.Serializer):
         return Follow.objects.filter(user=obj.user, author=obj.author).exists()
 
     def get_recipes(self, obj):
+        request = self.context.get('request')
+        print(request)
+        limit = request.GET.get('recipes_limit')
         queryset = Recipe.objects.filter(author=obj.author)
+        if limit:
+            queryset = queryset[:int(limit)]
         return SubRecipeSerializer(queryset, many=True).data
 
     def get_recipes_count(self, obj):

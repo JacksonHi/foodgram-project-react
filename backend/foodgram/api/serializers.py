@@ -23,7 +23,7 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class AmountOfIngredientsSerializer(serializers.ModelSerializer):
-    id = serializers.ReadOnlyField()
+    id = serializers.ReadOnlyField(source='ingredients.id')
     measurement_unit = serializers.ReadOnlyField(
         source='ingredients.measurement_unit')
     name = serializers.ReadOnlyField(source='ingredients.name')
@@ -109,12 +109,15 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         instance.name = validated_data.get('name')
-        instance.image = validated_data.get('image')
+        if validated_data.get('image') is not None:
+            instance.image = validated_data.get('image')
         instance.text = validated_data.get('text')
         instance.cooking_time = validated_data.get('cooking_time')
         tags_data = self.initial_data.get('tags')
         instance.tags.set(tags_data)
-        ingredients = validated_data.pop('ingredients')
+        instance.ingredients.clear()
+        AmountOfIngredients.objects.filter(recipe=instance).delete()
+        ingredients = validated_data.get('ingredients')
         self.create_ingredients(ingredients, instance)
         instance.save()
         return instance

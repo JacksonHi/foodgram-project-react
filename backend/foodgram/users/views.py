@@ -11,15 +11,19 @@ from users.serializers import FollowSerializer
 
 
 class CastomUserViewSet(UserViewSet):
-    pagination_class = SubscriptionPagination
 
-    @action(detail=False)
+    @action(detail=False, pagination_class = SubscriptionPagination)
     def subscriptions(self, request):
         """Список подписок"""
-        user = get_object_or_404(User, id=request.user.id)
-        follow = user.follower.all()
-        serializer = FollowSerializer(follow, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        user = request.user
+        queryset = Follow.objects.filter(user=user)
+        pages = self.paginate_queryset(queryset)
+        serializer = FollowSerializer(
+            pages,
+            many=True,
+            context={'request': request}
+        )
+        return self.get_paginated_response(serializer.data)
 
     @action(methods=['post', 'delete'], detail=True)
     def subscribe(self, request, id=None):
