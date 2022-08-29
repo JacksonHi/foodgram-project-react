@@ -29,7 +29,7 @@ load_dotenv()
 SECRET_KEY = 'django-insecure-qnta(m)wcg1-m#7zl-dl@k@t)yehp6@gd3(7xygd$eraqmsy%c'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -167,4 +167,4 @@ DJOSER = {
     'LOGIN_FIELD': 'email'
 }
 
-CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1']
+CSRF_TRUSTED_ORIGINS = ['http://84.201.166.53']
