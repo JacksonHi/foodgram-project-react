@@ -9,15 +9,18 @@ services:
       - ../.env
 
   frontend:
-    image: jacksonhuli/foodgram-frontend:latest
+    #image: jacksonhuli/foodgram-frontend:29.08.2022
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
     volumes:
       - ../frontend/:/app/result_build/
     depends_on:
       - db
 
   backend:
-    image: jacksonhuli/foodgram-backend:latest
-    #build: ../backend/foodgram
+    #image: jacksonhuli/foodgram-backend:v29.08.2022
+    build: ../backend/foodgram
     restart: always
     volumes:
       - static_value:/app/static/

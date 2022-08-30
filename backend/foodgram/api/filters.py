@@ -1,9 +1,7 @@
-from encodings import search_function
-from re import search
 from django_filters.rest_framework import FilterSet, filters
 from rest_framework.filters import SearchFilter
 
-from .models import Recipe, Tag
+from recipes.models import Recipe, Tag
 
 
 class IngredientFilter(SearchFilter):
@@ -22,17 +20,11 @@ class RecipeFilter(FilterSet):
 
     def get_is_favorited(self, queryset, name, value):
         if value:
-            """return Recipe.objects.filter(
-                favourite__author=self.request.user.id
-            ).order_by('-id')"""
             return queryset.filter(favourite__author=self.request.user.id)
         return queryset
 
     def get_is_in_shopping_cart(self, queryset, name, value):
         if value:
-            """return Recipe.objects.filter(
-                basket__author=self.request.user.id
-            ).order_by('-id')"""
             return queryset.filter(basket__author=self.request.user.id)
         return queryset
 

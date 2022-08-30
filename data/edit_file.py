@@ -8,7 +8,7 @@ with open('data/ingredients.json', 'r', encoding='utf-8') as f:
     
     for i in text:
         data = {
-              "model":  "api.ingredients",
+              "model":  "recipes.ingredients",
               "pk":  pk,
               "fields":  {}
            }
