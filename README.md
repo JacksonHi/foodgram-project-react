@@ -84,7 +84,7 @@ https://docs.docker.com/compose/install/
 $ scp опции файл пользователь@хост:файл
 ```
 Скопируйте файлы infra/docker-compose.yaml и infra/nginx.conf из проекта на сервер в home/<ваш_username>/infra/docker-compose.yaml и home/<ваш_username>/infra/nginx.conf
-Скопируйте подготовленные данные для заполнения балы данных data/tag.json и data/new_ingredients.json из проекта на сервер в home/<ваш_username>/data/tag.json и home/<ваш_username>/data/new_ingredients.json
+Скопируйте подготовленные данные для заполнения базы данных data/tag.json и data/new_ingredients.json из проекта на сервер в home/<ваш_username>/data/tag.json и home/<ваш_username>/data/new_ingredients.json
 
 ## Развертывание приложения
 Подлкючитесь к серверу:
@@ -95,7 +95,7 @@ ssh <USER>@<HOST>
 ```
 docker compose up
 ```
-При помощи 'docker cp' скопируйте подготовленные данные для заполнения балы данных home/<ваш_username>/data/tag.json и home/<ваш_username>/data/new_ingredients.json из сервера в контейнер app/tag.json и app/new_ingredients.json
+При помощи 'docker cp' скопируйте подготовленные данные для заполнения базы данных home/<ваш_username>/data/tag.json и home/<ваш_username>/data/new_ingredients.json из сервера в контейнер app/tag.json и app/new_ingredients.json
 
 Перейдите в запущенный контейнер backend приложения командой:
 ```
@@ -112,9 +112,9 @@ python manage.py loaddata tag.json new_ingredients.json
 ## Адреса для взаимодействия
 Админка:
 ```
-http://178.154.193.163/admin/
+http://84.201.166.53/admin/
 ```
 Сайт:
 ```
-http://178.154.193.163/api/v1/
+http://84.201.166.53/
 ```

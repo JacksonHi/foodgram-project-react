@@ -14,10 +14,17 @@ class TagAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
 
+class AmountIngredients(admin.TabularInline):
+    model = AmountOfIngredients
+    min_num = 1
+
+
 class RecipeAdmin(admin.ModelAdmin):
     list_display = ('name', 'author', 'favourite')
     search_fields = ('name', 'author')
     list_filter = ('author', 'name', 'tags')
+    filter_horizontal = ('ingredients',)
+    inlines = [AmountIngredients,]
 
     def favourite(self, obj):
         favorited_count = Favourites.objects.filter(recipe=obj).count()
@@ -28,6 +35,7 @@ class RecipeAdmin(admin.ModelAdmin):
 
 class AmountOfIngredientsAdmin(admin.ModelAdmin):
     list_display = ('recipe', 'ingredients', 'amount')
+    empty_value_display = '-пусто-'
 
 
 class FavouriteAdmin(admin.ModelAdmin):
