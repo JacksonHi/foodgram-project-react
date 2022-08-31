@@ -5,6 +5,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
 from .utils import download_cart
@@ -12,7 +13,6 @@ from .filters import IngredientFilter, RecipeFilter
 from recipes.models import (Basket, Favourites, Ingredients,
                             Recipe, Tag)
 from users.models import Follow
-from .pagination import MyPagination
 from .permissions import RecipePermission
 from .serializers import (IngredientsSerializer, RecipeSerializer,
                           TagSerializer, FollowSerializer,
@@ -22,7 +22,8 @@ User = get_user_model()
 
 
 class CastomUserViewSet(UserViewSet):
-    @action(detail=False, pagination_class=MyPagination)
+    pagination_class = PageNumberPagination
+    @action(detail=False)
     def subscriptions(self, request):
         """Список подписок"""
         user = request.user
@@ -69,21 +70,23 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Ingredients.objects.all()
     serializer_class = IngredientsSerializer
     filter_backends = (IngredientFilter,)
+    pagination_class = None
     search_fields = ('^name',)
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
+    pagination_class = None
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all().order_by('-id')
     serializer_class = RecipeSerializer
-    pagination_class = MyPagination
     permission_classes = (RecipePermission,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
+    pagination_class = PageNumberPagination
 
     def perform_create(self, serializer):
         serializer.save(
