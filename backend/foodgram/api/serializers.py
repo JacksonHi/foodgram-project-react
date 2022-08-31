@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_extra_fields.fields import Base64ImageField
-from rest_framework import exceptions, serializers
+from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
 from recipes.models import AmountOfIngredients, Ingredients, Recipe, Tag
@@ -128,12 +128,10 @@ class RecipeSerializer(serializers.ModelSerializer):
         return Recipe.objects.filter(basket__author=user, id=obj.id).exists()
 
     def validate(self, attrs):
-        # в attrs нет ингредиентов и тагов, если это не критично,
-        # может оставить так?
         ingredients = self.initial_data.get('ingredients')
         if not ingredients:
-            raise serializers.ValidationError({
-                'ingredients': 'Нужен хотя-бы один ингредиент для рецепта'})
+            raise serializers.ValidationError(
+                'Нужен хотя-бы один ингредиент для рецепта')
         ingredient_list = []
         for ingredient_item in ingredients:
             ingredient = get_object_or_404(Ingredients,
@@ -142,19 +140,17 @@ class RecipeSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError('ингредиент уже существует')
             ingredient_list.append(ingredient)
             if int(ingredient_item['amount']) <= 0:
-                raise serializers.ValidationError({
-                    'ingredients': ('количество не может быть <= 0')
-                })
+                raise serializers.ValidationError(
+                    'количество не может быть <= 0'
+                )
         attrs['ingredients'] = ingredients
         tags = self.initial_data.get('tags')
         if not tags:
-            raise exceptions.ValidationError(
+            raise serializers.ValidationError(
                 'Нужно добавить хотя бы один таг.'
             )
         if attrs['cooking_time'] <= 0:
-            raise serializers.ValidationError({
-                'cooking_time': ('время не может быть <= 0')
-            })
+            raise serializers.ValidationError('время не может быть <= 0')
         return attrs
 
     def create_ingredients(self, ingredients, recipe):
