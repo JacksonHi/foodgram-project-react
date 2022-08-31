@@ -156,4 +156,4 @@ DJOSER = {
     'LOGIN_FIELD': 'email'
 }
 
-CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1']
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1', 'http://84.201.166.53']

@@ -9,10 +9,10 @@ services:
       - ../.env
 
   frontend:
-    #image: jacksonhuli/foodgram-frontend:29.08.2022
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile
+    image: jacksonhuli/foodgram-frontend:29.08.2022
+    #build:
+      #context: ../frontend
+      #dockerfile: Dockerfile
     volumes:
       - ../frontend/:/app/result_build/
     depends_on:
